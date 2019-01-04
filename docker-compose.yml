@@ -1,0 +1,19 @@
+version: '2.1'
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      TARGET_URL: http://target:4000
+    mem_limit: 256000000
+    command: node --trace-warnings --max_old_space_size=230 index.js
+  target:
+    build: .
+    command: node target.js
+  siege:
+    image: yokogawa/siege
+    depends_on:
+      - app
+      - target
+    command: -c 100 http://app:3000
